@@ -13,9 +13,10 @@
             typeArea;
 
         function enableChatarea() {
-            chatBlock = chatBlock ||  document.createElement('div');
-            chats = chats || document.createElement('div');
-            typeArea = typeArea || document.createElement('div');
+            $(self).html('');
+            chatBlock = document.createElement('div');
+            chats = document.createElement('div');
+            typeArea = document.createElement('div');
 
             $(typeArea).html('<form><input id="message" name="message" placeholder="Message" type="text" /><button class="button secondary" type="submit">Say</button>');
             $(self).append($(chatBlock).append(chats)).append(typeArea);

@@ -7,12 +7,15 @@
     $.fn.chater = function () {
 
         var self = this,
-            socket = io.connect('');
+            socket = io.connect(''),
+            chatBlock,
+            chats,
+            typeArea;
 
         function enableChatarea() {
-            var chatBlock = document.createElement('div'),
-                chats = document.createElement('div'),
-                typeArea = document.createElement('div');
+            chatBlock = chatBlock ||  document.createElement('div');
+            chats = chats || document.createElement('div');
+            typeArea = typeArea || document.createElement('div');
 
             $(typeArea).html('<form><input id="message" name="message" placeholder="Message" type="text" /><button class="button secondary" type="submit">Say</button>');
             $(self).append($(chatBlock).append(chats)).append(typeArea);
@@ -41,7 +44,6 @@
         }
 
         socket.on('join', function (data) {
-            console.log('Receive Join Event');
             var nickname = 'Guest',
                 revealWindow = document.createElement('div');
 

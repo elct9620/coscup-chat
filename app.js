@@ -63,4 +63,10 @@ io.sockets.on('connection', function (socket) {
             socket.emit('chat', {nickname: nickname, message: data.message});
         });
     });
+
+    socket.on('disconnect', function () {
+        socket.get('nickname', function (err, nickname) {
+            socket.broadcast.emit('chat', {nickname: 'System', message: nickname + ' leaved.' });
+        });
+    });
 });

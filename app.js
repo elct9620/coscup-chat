@@ -46,14 +46,29 @@ io.configure(function () {
     io.set("polling duration", 10);
 });
 
+var onlines = 0,
+    history = [];
+
+function updateHistory(nickname, message) {
+    if (history.length > 100) {
+        history.pop();
+    }
+
+    history.push({nickname: nickname, message: message});
+}
+
 //Socket IO
 io.sockets.on('connection', function (socket) {
     //Request Join
     socket.emit('join');
     socket.on('join', function (data) {
         socket.set('nickname', data.nickname, function () {
-            socket.emit('ready');
+            socket.emit('ready', {history: history});
             socket.broadcast.emit('chat', {nickname: 'System', message: data.nickname + ' join caht.'});
+
+            onlines += 1;
+            socket.broadcast.emit('online', {count: onlines});
+            socket.emit('online', {count: onlines});
         });
     });
 
@@ -61,6 +76,7 @@ io.sockets.on('connection', function (socket) {
         socket.get('nickname', function (err, nickname) {
             socket.broadcast.emit('chat', {nickname: nickname, message: data.message});
             socket.emit('chat', {nickname: nickname, message: data.message});
+            updateHistory(nickname, data.message);
         });
     });
 
@@ -68,5 +84,8 @@ io.sockets.on('connection', function (socket) {
         socket.get('nickname', function (err, nickname) {
             socket.broadcast.emit('chat', {nickname: 'System', message: nickname + ' leaved.' });
         });
+
+        onlines -= 1;
+        socket.broadcast.emit('online', {count: onlines});
     });
 });

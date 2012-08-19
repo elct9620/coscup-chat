@@ -12,7 +12,10 @@
             chats,
             typeArea;
 
-        function enableChatarea() {
+        function enableChatarea(histories) {
+
+            var i, history;
+
             $(self).html('');
             chatBlock = document.createElement('div');
             chats = document.createElement('div');
@@ -38,9 +41,20 @@
                 e.preventDefault();
             });
 
+            for (i = 0; i < histories.length; i += 1) {
+                history  = histories[i];
+                $(chats).append('<p><span class="label radius secondary">' + history.nickname + '</span> ' + history.message + '</p>');
+            }
+
+            $(chatBlock).animate({'scrollTop': $(chats).height()});
+
             socket.on('chat', function (data) {
                 $(chats).append('<p><span class="label radius secondary">' + data.nickname + '</span> ' + data.message + '</p>');
-                $(chatBlock).animate({'scrollTop': $(chats).height()}, 'slow');
+                $(chatBlock).animate({'scrollTop': $(chats).height()});
+            });
+
+            socket.on('online', function (data) {
+                $(document).attr('title', data.count + ' Chater');
             });
         }
 
@@ -62,9 +76,9 @@
                     $(revealWindow).children('#alert').html('You must type your nickname').fadeIn();
                 } else {
                     socket.emit('join', {nickname: nickname});
-                    socket.on('ready', function () {
+                    socket.on('ready', function (data) {
                         $(revealWindow).trigger('reveal:close');
-                        enableChatarea();
+                        enableChatarea(data.history);
                     });
                 }
 

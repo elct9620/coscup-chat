@@ -12,6 +12,10 @@
             chats,
             typeArea;
 
+        function escapeHTML(string) {
+            return $('<div>').text(string).html();
+        }
+
         function enableChatarea(histories) {
 
             var i, history;
@@ -43,13 +47,13 @@
 
             for (i = 0; i < histories.length; i += 1) {
                 history  = histories[i];
-                $(chats).append('<p><span class="label radius secondary">' + history.nickname + '</span> ' + history.message + '</p>');
+                $(chats).append('<p><span class="label radius secondary">' + history.nickname + '</span> ' + escapeHTML(history.message) + '</p>');
             }
 
             $(chatBlock).animate({'scrollTop': $(chats).height()});
 
             socket.on('chat', function (data) {
-                $(chats).append('<p><span class="label radius secondary">' + data.nickname + '</span> ' + data.message + '</p>');
+                $(chats).append('<p><span class="label radius secondary">' + data.nickname + '</span> ' + escapeHTML(data.message) + '</p>');
                 $(chatBlock).animate({'scrollTop': $(chats).height()});
             });
 

@@ -82,10 +82,11 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('disconnect', function () {
         socket.get('nickname', function (err, nickname) {
-            socket.broadcast.emit('chat', {nickname: 'System', message: nickname + ' leaved.' });
+            if (nickname !== null || nickname.length > 0) {
+                socket.broadcast.emit('chat', {nickname: 'System', message: nickname + ' leaved.' });
+                onlines -= 1;
+                socket.broadcast.emit('online', {count: onlines});
+            }
         });
-
-        onlines -= 1;
-        socket.broadcast.emit('online', {count: onlines});
     });
 });
